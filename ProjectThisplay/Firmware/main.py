@@ -1,5 +1,6 @@
 from micropython import mem_info
 from machine import Pin
+from EPD_5in65 import EPD_5in65
 import sys
 import os
 import network
@@ -32,21 +33,6 @@ mem_info()
 # First- figure out what device we're using and what country we're in
 device = 'EPD_5in65' # Let's assume we're using the 7 color display by default...
 country = 'US'       # and of course
-try:
-    with open('./device.txt', 'r') as device_txt:
-        device_lines = device_txt.read()
-        for line in device_lines.split("\n"):
-            hashpos = line.find('#')
-            uncommented_line = line if hashpos == -1 else line[0: hashpos]
-            device_match = re.search('device\s*=\s*\"?(\w+)\"?', uncommented_line)
-            if (device_match is not None):
-                device = device_match.group(1)
-            country_match = re.search('country\s*=\s*\"?(\w\w)\"?', uncommented_line)
-            if (country_match is not None):
-                country = country_match.group(1)
-        device_lines = None
-except:
-    print('Could not find/parse device.txt.')
 
 print('device', device)
 print('country', country)
@@ -56,47 +42,14 @@ rp2.country(country)
 # General setup
 led.on()
 
-epd = None
-if device == 'EPD_2in13_B':
-    from EPD_2in13_B import EPD_2in13_B
-    epd = EPD_2in13_B()
-if device == 'EPD_2in9_B':
-    from EPD_2in9_B import EPD_2in9_B
-    epd = EPD_2in9_B()
-elif device == 'EPD_3in7':
-    from EPD_3in7 import EPD_3in7
-    epd = EPD_3in7()
-elif device == 'EPD_4in2':
-    from EPD_4in2 import EPD_4in2
-    epd = EPD_4in2()
-elif device == 'EPD_5in65':
-    from EPD_5in65 import EPD_5in65
-    epd = EPD_5in65()
-elif device == 'EPD_7in5_B':
-    from EPD_7in5_B import EPD_7in5_B
-    epd = EPD_7in5_B()
+epd = EPD_5in65()
 
 # USER BUTTONS - These are completely optional.
-button_0 = None # If pushed, will display IP address on display
-button_1 = None # Push to call sys.exit()
-button_2 = None # Push call machine.reset()
-
-if device == 'EPD_5in65':
-    # The 5.65 inch display has three buttons mounted on the PCB.
-    # These are connected via pull-up resistors to GPIO 15, GPIO 17, and GPIO 2.
-    button_0 = Pin(15, Pin.IN, Pin.PULL_UP) # GPIO 15   Display connection info on screen
-    button_1 = Pin(17, Pin.IN, Pin.PULL_UP) # GPIO 17   Clear screen
-    button_2 = Pin(2, Pin.IN, Pin.PULL_UP)  # GPIO 2  This will trigger invocation of machine.reset()
-elif device == 'EPD_7in5_B':
-    # The 7.5 inch display has three buttons connected via pull-up resistors to GPIO 2, GPIO 3, and the RUN pin.
-    button_0 = Pin(2, Pin.IN, Pin.PULL_UP) # GPIO 2   Display connection info on screen
-    button_1 = Pin(3, Pin.IN, Pin.PULL_UP) # GPIO 3   Clear screen
-    # button_2 grounds the RUN pin and takes care of itself
-elif device == 'EPD_4in2':
-    # The 4.2 inch display has two buttons connected via pull-up resistors to GPIO 15 and GPIO 17.
-    button_0 = Pin(15, Pin.IN, Pin.PULL_UP)
-    button_1 = Pin(17, Pin.IN, Pin.PULL_UP)
-
+# The 5.65 inch display has three buttons mounted on the PCB.
+# These are connected via pull-up resistors to GPIO 15, GPIO 17, and GPIO 2.
+button_0 = Pin(15, Pin.IN, Pin.PULL_UP) # GPIO 15   Display connection info on screen
+button_1 = Pin(17, Pin.IN, Pin.PULL_UP) # GPIO 17   Clear screen
+button_2 = Pin(2, Pin.IN, Pin.PULL_UP)  # GPIO 2  This will trigger invocation of machine.reset()
 
 # These flags will be checked after every socket timeout while we're waiting for a connection
 button_0_flag = False

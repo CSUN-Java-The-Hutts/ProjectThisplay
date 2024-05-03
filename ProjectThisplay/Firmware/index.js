@@ -1,66 +1,15 @@
 main = function(device) {
     console.log('device', device);
 
-    let EPD_WIDTH = 128;
-    let EPD_HEIGHT = 296;
-    let AVAILABLE_COLORS = ['white', 'black'];
-    let CAPTION = device
+    // GS4_HMSB buffer, width * height // 2 bytes
+    // buffer = bytearray(self.height * self.width // 2)
+    // FrameBuffer(buffer, self.width, self.height, framebuf.GS4_HMSB)
+    let EPD_WIDTH = 600;
+    let EPD_HEIGHT = 448;
+    let AVAILABLE_COLORS = ['white', 'blank', 'black', 'red', 'orange', 'yellow', 'green', 'blue'];
+    let CAPTION = '600x448 7 color display';
 
-    if (device === 'EPD_2in13_B') {
-        // 104x212 white/black/red
-        // Two MONO_HLSB buffers (black first, red second)
-        // buffer_black = bytearray(self.height * self.width // 8)
-        // buffer_red = bytearray(self.height * self.width // 8)
-        // imageblack = framebuf.FrameBuffer(self.buffer_black, self.width, self.height, framebuf.MONO_HLSB)
-        // imagered = framebuf.FrameBuffer(self.buffer_red, self.width, self.height, framebuf.MONO_HLSB)
-        EPD_WIDTH = 104
-        EPD_HEIGHT = 212
-        AVAILABLE_COLORS = ['white', 'black', 'red'];
-        CAPTION = '104x212 red/black';
-    } else if (device === 'EPD_2in9_B') {
-        // 128x296 white/black/red
-        // Two MONO_HLSB buffers (black first, red second)
-        // buffer_black = bytearray(self.height * self.width // 8)
-        // buffer_red = bytearray(self.height * self.width // 8)
-        // imageblack = framebuf.FrameBuffer(self.buffer_black, self.width, self.height, framebuf.MONO_HLSB)
-        // imagered = framebuf.FrameBuffer(self.buffer_red, self.width, self.height, framebuf.MONO_HLSB)
-        EPD_WIDTH = 128;
-        EPD_HEIGHT = 296;
-        AVAILABLE_COLORS = ['white', 'black', 'red'];
-        CAPTION = '128x296 red/black';
-    } else if (device === 'EPD_3in7') {
-        // One single GS2_HMSB buffer, 4 colors.
-        // buffer_4Gray = bytearray(self.height * self.width // 4)
-        // FrameBuffer(buffer_4Gray, self.width, self.height, framebuf.GS2_HMSB)
-        EPD_WIDTH = 280;
-        EPD_HEIGHT = 480;
-        AVAILABLE_COLORS = ['white', 'lightgrey', 'darkgrey', 'black'];
-        CAPTION = '280x480 four color display';
-    } else if (device === 'EPD_4in2') {
-        // One single GS2_HMSB buffer, 4 colors.
-        // buffer_4Gray = bytearray(self.height * self.width // 4)
-        // FrameBuffer(self.buffer_4Gray, self.width, self.height, framebuf.GS2_HMSB)
-        EPD_WIDTH = 400;
-        EPD_HEIGHT = 300;
-        AVAILABLE_COLORS = ['white', 'lightgrey', 'darkgrey', 'black']
-        CAPTION = '400x300 four color display';
-    } else if (device === 'EPD_5in65') {
-        // GS4_HMSB buffer, width * height // 2 bytes
-        // buffer = bytearray(self.height * self.width // 2)
-        // FrameBuffer(buffer, self.width, self.height, framebuf.GS4_HMSB)
-        EPD_WIDTH = 600;
-        EPD_HEIGHT = 448;
-        AVAILABLE_COLORS = ['white', 'blank', 'black', 'red', 'orange', 'yellow', 'green', 'blue'];
-        CAPTION = '600x448 7 color display';
-    } else if (device === 'EPD_7in5_B') {
-        // Two MONO HLSB buffers (black first, red second)
-        EPD_WIDTH = 800;
-        EPD_HEIGHT = 480;
-        AVAILABLE_COLORS = ['white', 'black', 'red'];
-        CAPTION = '800x480 red/black display';
-    }
-
-   document.getElementById('caption').innerHTML = CAPTION;
+    document.getElementById('caption').innerHTML = CAPTION;
 
     const PALETTE_COLORS = {
         white: [0xff, 0xff, 0xff],
@@ -397,110 +346,6 @@ main = function(device) {
         context.putImageData(imgData, 0, 0);
     }
 
-    // white / black / red
-    function extractHLSBFromCanvasBlackRed(canvas, include_red=true) {
-        const imageData = mainContext.getImageData(0, 0, canvas.width, canvas.height);
-        const buffer = imageData.data.buffer;  // ArrayBuffer
-        const byteBuffer = new Uint8ClampedArray(buffer);
-
-        const black_MONO_HLSB = new Uint8Array((canvas.width >> 3) * canvas.height);
-        const red_MONO_HLSB = include_red
-            ? new Uint8Array((canvas.width >> 3) * canvas.height)
-            : undefined;
-
-        let buffer_index = 0;
-        let hlsb_index = 0;
-        let bitshift = 7;
-
-        for (let y = 0; y < canvas.height; y++) {
-            for (let x = 0; x < canvas.width; x++) {
-                const red = byteBuffer[buffer_index++]
-                const green = byteBuffer[buffer_index++]
-                const blue = byteBuffer[buffer_index++];
-                const alpha = byteBuffer[buffer_index++];
-                const color = findClosestPaletteColor(red, green, blue, alpha);
-                let hlsb = undefined;
-                if (color === 'black') {
-                    hlsb = black_MONO_HLSB
-                }
-                if (include_red && color === 'red') {
-                    hlsb = red_MONO_HLSB;
-                }
-                if (hlsb) {
-                    hlsb[hlsb_index] |= (1 << bitshift);
-                }
-                if (bitshift === 0) {
-                    bitshift += 8;
-                    hlsb_index++;
-                }
-                bitshift--;
-            }
-        }
-        for (let index = 0; index < black_MONO_HLSB.length; index++) {
-            black_MONO_HLSB[index] = ~black_MONO_HLSB[index];
-            if (include_red) {
-                red_MONO_HLSB[index] = ~red_MONO_HLSB[index];
-            }
-        }
-        const b64_encoded_black = btoa(String.fromCharCode.apply(null, black_MONO_HLSB))
-        if (!include_red) {
-            return [ b64_encoded_black ];
-        }
-        const b64_encoded_red = btoa(String.fromCharCode.apply(null, red_MONO_HLSB))
-        return [
-            b64_encoded_black,
-            b64_encoded_red,
-        ];
-    }
-
-    // Grayscale 4 color
-    function extractHLSBFromCanvasGray4(canvas, flipGreys=false) {
-        const imageData = mainContext.getImageData(0, 0, canvas.width, canvas.height);
-        const buffer = imageData.data.buffer;  // ArrayBuffer
-        const byteBuffer = new Uint8ClampedArray(buffer);
-
-        const first_HLSB = new Uint8Array((canvas.width >> 3) * canvas.height);
-        const second_HLSB = new Uint8Array((canvas.width >> 3) * canvas.height);
-
-        let buffer_index = 0;
-        let hlsb_index = 0;
-        let bitshift = 7;
-
-        for (let y = 0; y < canvas.height; y++) {
-            for (let x = 0; x < canvas.width; x++) {
-                const red = byteBuffer[buffer_index++];
-                const green = byteBuffer[buffer_index++];
-                const blue = byteBuffer[buffer_index++];
-                const alpha = byteBuffer[buffer_index++];
-                const color = findClosestPaletteColor(red, green, blue, alpha);
-                if (flipGreys) {
-                    if (color === 'white' || color === 'lightgrey') {
-                        first_HLSB[hlsb_index] |= (1 << bitshift);
-                    }
-                    if (color === 'white' || color === 'darkgrey') {
-                        second_HLSB[hlsb_index] |= (1 << bitshift);
-                    }
-                } else {
-                    if (color === 'white' || color === 'darkgrey') {
-                        first_HLSB[hlsb_index] |= (1 << bitshift);
-                    }
-                    if (color === 'white' || color === 'lightgrey') {
-                        second_HLSB[hlsb_index] |= (1 << bitshift);
-                    }
-                }
-                if (bitshift === 0) {
-                    bitshift += 8;
-                    hlsb_index++;
-                }
-                bitshift--;
-            }
-        }
-        return [
-            btoa(String.fromCharCode.apply(null, first_HLSB)),
-            btoa(String.fromCharCode.apply(null, second_HLSB)),
-        ];
-    }
-
     // 7 color
     function extractHMSBFromCanvas(canvas) {
         const imageData = mainContext.getImageData(0, 0, canvas.width, canvas.height);
@@ -625,33 +470,8 @@ main = function(device) {
     async function uploadCanvas() {
         setAppMode(APP_MODES.UPLOAD_OPERATION);
         printModal.style.display = 'block';
-        if (device === 'EPD_2in13_B' || device === 'EPD_2in9_B') {
-            const [black, red] = extractHLSBFromCanvasBlackRed(mainCanvas);
-            sequentialPost([black, red]);
-        } else if (device === 'EPD_3in7') {
-            const b64_buffers = extractHLSBFromCanvasGray4(mainCanvas);
-            sequentialPost(b64_buffers);
-        } else if (device === 'EPD_4in2') {
-            const b64_buffers = extractHLSBFromCanvasGray4(mainCanvas, true);
-            sequentialPost(b64_buffers);
-        } else if (device === 'EPD_5in65') {
-            const b64_buffers = extractHMSBFromCanvas(mainCanvas);
-            sequentialPost(b64_buffers);
-        } else if (device === 'EPD_7in5_B') {
-            const [black, red] = extractHLSBFromCanvasBlackRed(mainCanvas)
-            // These are each 48000 bytes; split each into four chunks of 12000
-            quarter = black.length / 4
-            sequentialPost([
-                black.subarray(0, quarter),
-                black.subarray(quarter, 2 * quarter),
-                black.subarray(2 * quarter, 3 * quarter),
-                black.subarray(3 * quarter, 4 * quarter),
-                red.subarray(0, quarter),
-                red.subarray(quarter, 2 * quarter),
-                red.subarray(2 * quarter, 3 * quarter),
-                red.subarray(3 * quarter, 4 * quarter),
-            ]);
-        }
+        const b64_buffers = extractHMSBFromCanvas(mainCanvas);
+        sequentialPost(b64_buffers);
         closeModalButton.disabled = false;
     }
 
@@ -890,20 +710,7 @@ window.onload = function() {
     xhr.onreadystatechange = function() {
         if (xhr.readyState === 4) {
             // Request finished
-            if (xhr.status === 200 && xhr.responseText) {
-                const lines = xhr.responseText.split('\n');
-                let device = '';
-                lines.forEach((line) => {
-                    const hashpos = line.indexOf('#');
-                    const match = (hashpos === -1 ? line : line.substring(0, hashpos)).match(/device\s*=\s*"?(\w+)"?/);
-                    if (match) {
-                        device = match[1];
-                    }
-                });
-                main(device);
-            } else {
-                main(xhr.status === 404 ? 'EPD_5in65' : ''); // Pico reports no device.txt file; default to EPD_5in65
-            }
+            main('EPD_5in65'); // default to EPD_5in65
         }
     };
     xhr.open("GET", '/device.txt');
