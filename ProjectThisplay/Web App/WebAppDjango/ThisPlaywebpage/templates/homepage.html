@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="gradient-bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <style>
+    /* Custom styles here */
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #333;
+      color: white;
+    }
+    h1 {
+      margin: 0;
+      text-align: center; /* Center the title */
+    }
+    #accountBtn {
+      order: 1; /* Move account button to the right */
+      margin-left: auto; /* Push it to the right */
+    }
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body class="gradient-bg">
+    <div class="header">
+        <h1>ThisPlay</h1>
+        <button id="accountBtn" class="btn">Account</button>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <!-- Sidebar Content Here -->
+        Sidebar Content
+    </div>
+    <div class="content">
+        <button class="upload-btn btn" onclick="handleUpload()">Upload File</button>
+        <input type="file" id="fileInput" onchange="handleFileSelect(event)">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+    </div>
+</body>
+</html>
