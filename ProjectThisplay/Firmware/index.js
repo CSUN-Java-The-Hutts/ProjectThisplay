@@ -421,6 +421,12 @@ main = function(device) {
         let block_retries = 0; // max 2
         while (appMode === APP_MODES.UPLOAD_OPERATION && block < buffers.length && sequence_retries < 3) {
             updateUploadStatus(`Uploading block ${block + 1} of ${buffers.length}${block_retries ? " (retry #"+block_retries+")" : ""}...`);
+
+            // Log the URL and data being posted
+            const url = `/block${block}`;
+            console.log(`Attempting to POST to URL: ${url}`);
+            console.log(`Data being POSTed:`, buffers[block]);
+
             const response = await fetch(`/block${block}`, {
                 method: 'POST',
                 headers: {
