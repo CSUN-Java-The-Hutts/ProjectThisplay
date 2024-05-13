@@ -95,17 +95,17 @@
 <body class="gradient-bg">
     <div class="header">
         <h1>ThisPlay</h1>
-        <button id="accountBtn" class="btn">Account</button>
+        <a href="{% url 'admin:index' %}" class="btn">Admin Portal</a>
     </div>
     <div class="content">
         <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-            <input type="file" id="fileInput" onchange="handleFileSelect(event)" name="document">
-        <button class="upload-btn btn" >Upload File</button>
-            </form>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="file" name="document">
+            <button class="upload-btn btn" type="submit">Upload File</button>
+        </form>
 
-
+        <a href="upload" class="btn">Click Here</a>
 
         <div class="progress-bar">
             <div class="progress" id="progress"></div>
