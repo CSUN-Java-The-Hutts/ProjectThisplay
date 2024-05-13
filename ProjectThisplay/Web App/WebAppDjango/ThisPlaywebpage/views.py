@@ -20,13 +20,18 @@ def file_upload_view(request):
 '''
 
 def file_upload_view(request):
+    print("Method:", request.method)  # Check request method
     if request.method == 'POST':
-        uploaded_file = request.FILES.get('document')  # 'document' should match the name attribute in the form
+        print("Files in POST:", request.FILES)  # Check received files
+        uploaded_file = request.FILES.get('document')
+        print("Uploaded file:", uploaded_file)  # Verify file retrieval
         if uploaded_file:
-            instance = UploadedFile(file=uploaded_file)
+            instance = Uploads(file=uploaded_file)
             instance.save()
+            print("File path:", instance.file.path)  # Check file path
             return HttpResponse("File uploaded successfully!")
-    return render(request, 'uploader/upload.html')
+    return render(request, 'homepage.html')
 
 def index(request):
     return render(request, 'homepage.html')
+
