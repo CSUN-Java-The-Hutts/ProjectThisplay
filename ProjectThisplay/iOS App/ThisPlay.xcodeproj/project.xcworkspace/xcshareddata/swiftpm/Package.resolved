@@ -1,0 +1,24 @@
+{
+  "originHash" : "25c7bf6f9fdddefd469aa91a18130aaeb53e5293b6f8a667885dc948dc44e6de",
+  "pins" : [
+    {
+      "identity" : "ditheringengine",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Eskils/DitheringEngine",
+      "state" : {
+        "branch" : "main",
+        "revision" : "e402ea8fe25cc2be6378b0a5b468f88979a18fa3"
+      }
+    },
+    {
+      "identity" : "mantis",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/guoyingtao/Mantis",
+      "state" : {
+        "revision" : "d6880eb97267248f89e6cef2dd52785d50627639",
+        "version" : "1.9.0"
+      }
+    }
+  ],
+  "version" : 3
+}

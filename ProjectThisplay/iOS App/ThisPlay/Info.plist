@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app requires local network access to find and communicate with your pico-w running ThisPlay firmware on your network.</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string>ThisPlay needs access to your photo library in order to save edited images back to your iOS device.</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>local</key>
+            <dict>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+                <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSTemporaryExceptionAllowsInsecureHTTPLoadsExpiration</key>
+                <date>2025-01-01T00:00:00Z</date> <!-- Set an appropriate expiration date -->
+            </dict>
+        </dict>
+        <key>NSAllowsArbitraryLoadsInWebContent</key>
+        <true/>
+    </dict>
+    <key>CFBundleIcons</key>
+    <dict>
+        <key>CFBundlePrimaryIcon</key>
+        <dict>
+            <key>CFBundleIconFiles</key>
+            <array>
+                <string>AppIcon</string>
+            </array>
+        </dict>
+        <key>CFBundleAlternateIcons</key>
+        <dict>
+            <key>AppIcon_Mixed_1</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>AppIcon_Mixed_1</string>
+                </array>
+            </dict>
+            <key>AppIcon_Mixed_2</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>AppIcon_Mixed_2</string>
+                </array>
+            </dict>
+            <key>AppIcon_Mixed_3</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>AppIcon_Mixed_3</string>
+                </array>
+            </dict>
+            <key>AppIcon_Peets_1</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>AppIcon_Peets_1</string>
+                </array>
+            </dict>
+            <key>AppIcon_Shapes_1</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>AppIcon_Shapes_1</string>
+                </array>
+            </dict>
+            <key>AppIcon_Shapes_2</key>
+            <dict>
+                <key>CFBundleIconFiles</key>
+                <array>
+                    <string>AppIcon_Shapes_2</string>
+                </array>
+            </dict>
+        </dict>
+    </dict>
+</dict>
+</plist>
